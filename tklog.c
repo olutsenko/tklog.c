@@ -283,16 +283,11 @@ void tklog_log_line(const char *component, int level, const char *prefix, const 
   
     //pthread_mutex_lock(&log_mutex);
 
-    if (log->filepath) {
-        log->file = fopen(log->filepath, "a");
-        if (log->file != NULL) {
-            char *buf;
-            tklog_color_line(component, level, prefix, str, 0, &buf);
-            fprintf(log->file, "%s\n", buf);
-            free(buf);
-            fclose(log->file);
-        }
-
+    if (log->file) {
+        char *buf;
+        tklog_color_line(component, level, prefix, str, 0, &buf);
+        fprintf(log->file, "%s\n", buf);
+        free(buf);
     }
     
     if (log->driver->render_linec) {
@@ -345,8 +340,7 @@ int tklog_set_log_file(const char *filepath) {
     
     log->filepath = malloc(sizeof(char) * (strlen(filepath) + 1));
     strcpy(log->filepath, filepath);
-    fclose(log->file);
-    
+
     return 1;
     
 }
